@@ -65,13 +65,28 @@ namespace WebCore {
 
 WrapperTypeInfo V8Document::info = { V8Document::GetTemplate, V8Document::derefObject, 0 };
 
-bool security_check(Document *imp, WTF::String name)
+bool security_check(Document *imp, WTF::String name)			//checking specific DOM API calls
 {
 	if (imp->firstChild()==NULL) return true;
-	if (!imp->firstChild()->isHTMLElement()) return true;
-	WTF::String Acl=((Element*)imp->firstChild())->getAttribute(name);
-	if ((Acl=="")||(Acl==0)) return true;
+	bool flag = false;
+	if (!imp->firstChild()->isHTMLElement())
+	{
+		//to check if the document has a DTD at the beginning.
+		if ((!imp->firstChild()->nextSibling())||(!imp->firstChild()->nextSibling()->isHTMLElement())) return true;
+		flag = true;
+	}
 	V8IsolatedContext* isolatedContext = V8IsolatedContext::getEntered();
+	if (isolatedContext!=0)
+	{
+		if (isolatedContext->is_SharedLib()) return true;
+	}
+	WTF::String Acl;
+	if (!flag)
+	{
+		Acl=((Element*)imp->firstChild())->getAttribute(name);
+	}
+	else Acl = ((Element*)((Element*)imp->firstChild()->nextSibling()))->getAttribute(name);
+	if ((Acl=="")||(Acl==0)) return true;
 	int worldID = 0;
 	if (isolatedContext!=0) worldID = isolatedContext->getWorldID();
 	if ((worldID == 0)||(worldID == -1)) return true;
@@ -238,10 +253,10 @@ static void domainAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> va
 {
     INC_STATS("DOM.Document.domain._set");
     Document* imp = V8Document::toNative(info.Holder());
-	WTF::String ACLname = "domainsetterACL";
-	if (!security_check(imp,ACLname)) return;
     V8Parameter<WithNullCheck> v = value;
     ExceptionCode ec = 0;
+	WTF::String ACLname = "domainsetterACL";
+	if (!security_check(imp,ACLname)) return;
     imp->setDomain(v, ec);
     if (UNLIKELY(ec))
         V8Proxy::setDOMException(ec);
@@ -254,7 +269,7 @@ static v8::Handle<v8::Value> URLAttrGetter(v8::Local<v8::String> name, const v8:
     Document* imp = V8Document::toNative(info.Holder());
 	WTF::String ACLname = "URLgetterACL";
 	if (!security_check(imp,ACLname)) return v8String("");
-	else return v8String(imp->url());
+    return v8String(imp->url());
 }
 
 static v8::Handle<v8::Value> cookieAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -276,10 +291,10 @@ static void cookieAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> va
 {
     INC_STATS("DOM.Document.cookie._set");
     Document* imp = V8Document::toNative(info.Holder());
-	WTF::String ACLname = "cookiesetterACL";
-	if (!security_check(imp,ACLname)) return;
     V8Parameter<WithNullCheck> v = value;
     ExceptionCode ec = 0;
+	WTF::String ACLname = "cookiesetterACL";
+	if (!security_check(imp,ACLname)) return;
     imp->setCookie(v, ec);
     if (UNLIKELY(ec))
         V8Proxy::setDOMException(ec);
@@ -299,10 +314,10 @@ static void bodyAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> valu
 {
     INC_STATS("DOM.Document.body._set");
     Document* imp = V8Document::toNative(info.Holder());
-	WTF::String ACLname = "bodysetterACL";
-	if (!security_check(imp,ACLname)) return;
     HTMLElement* v = V8HTMLElement::HasInstance(value) ? V8HTMLElement::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
     ExceptionCode ec = 0;
+	WTF::String ACLname = "bodysetterACL";
+	if (!security_check(imp,ACLname)) return;
     imp->setBody(WTF::getPtr(v), ec);
     if (UNLIKELY(ec))
         V8Proxy::setDOMException(ec);

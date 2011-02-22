@@ -77,6 +77,7 @@ static v8::Handle<v8::Value> langAttrGetter(v8::Local<v8::String> name, const v8
 static void langAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.HTMLElement.lang._set");
+
     setElementStringAttr(info, HTMLNames::langAttr, value);
 }
 
@@ -89,6 +90,7 @@ static v8::Handle<v8::Value> dirAttrGetter(v8::Local<v8::String> name, const v8:
 static void dirAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.HTMLElement.dir._set");
+
     setElementStringAttr(info, HTMLNames::dirAttr, value);
 }
 
@@ -101,6 +103,7 @@ static v8::Handle<v8::Value> classNameAttrGetter(v8::Local<v8::String> name, con
 static void classNameAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.HTMLElement.className._set");
+
     setElementStringAttr(info, HTMLNames::classAttr, value);
 }
 
@@ -108,6 +111,7 @@ static v8::Handle<v8::Value> tabIndexAttrGetter(v8::Local<v8::String> name, cons
 {
     INC_STATS("DOM.HTMLElement.tabIndex._get");
     HTMLElement* imp = V8HTMLElement::toNative(info.Holder());
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());
     return v8::Integer::New(imp->tabIndex());
 }
 
@@ -115,6 +119,7 @@ static void tabIndexAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> 
 {
     INC_STATS("DOM.HTMLElement.tabIndex._set");
     HTMLElement* imp = V8HTMLElement::toNative(info.Holder());
+	if (!RO_check(imp)) return;
     int v = toInt32(value);
     imp->setTabIndex(v);
     return;
@@ -124,6 +129,7 @@ static v8::Handle<v8::Value> draggableAttrGetter(v8::Local<v8::String> name, con
 {
     INC_STATS("DOM.HTMLElement.draggable._get");
     HTMLElement* imp = V8HTMLElement::toNative(info.Holder());
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());
     return v8Boolean(imp->draggable());
 }
 
@@ -131,6 +137,7 @@ static void draggableAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value>
 {
     INC_STATS("DOM.HTMLElement.draggable._set");
     HTMLElement* imp = V8HTMLElement::toNative(info.Holder());
+	if (!RO_check(imp)) return;
     bool v = value->BooleanValue();
     imp->setDraggable(v);
     return;
@@ -140,6 +147,7 @@ static v8::Handle<v8::Value> hiddenAttrGetter(v8::Local<v8::String> name, const 
 {
     INC_STATS("DOM.HTMLElement.hidden._get");
     HTMLElement* imp = V8HTMLElement::toNative(info.Holder());
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());
     return v8Boolean(imp->hasAttribute(WebCore::HTMLNames::hiddenAttr));
 }
 
@@ -147,6 +155,7 @@ static void hiddenAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> va
 {
     INC_STATS("DOM.HTMLElement.hidden._set");
     HTMLElement* imp = V8HTMLElement::toNative(info.Holder());
+	if (!RO_check(imp)) return;
     bool v = value->BooleanValue();
     imp->setBooleanAttribute(WebCore::HTMLNames::hiddenAttr, v);
     return;
@@ -156,6 +165,7 @@ static v8::Handle<v8::Value> innerHTMLAttrGetter(v8::Local<v8::String> name, con
 {
     INC_STATS("DOM.HTMLElement.innerHTML._get");
     HTMLElement* imp = V8HTMLElement::toNative(info.Holder());
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());
     return v8String(imp->innerHTML());
 }
 
@@ -176,6 +186,7 @@ static v8::Handle<v8::Value> innerTextAttrGetter(v8::Local<v8::String> name, con
 {
     INC_STATS("DOM.HTMLElement.innerText._get");
     HTMLElement* imp = V8HTMLElement::toNative(info.Holder());
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());
     return v8String(imp->innerText());
 }
 
@@ -196,6 +207,7 @@ static v8::Handle<v8::Value> outerHTMLAttrGetter(v8::Local<v8::String> name, con
 {
     INC_STATS("DOM.HTMLElement.outerHTML._get");
     HTMLElement* imp = V8HTMLElement::toNative(info.Holder());
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());
     return v8String(imp->outerHTML());
 }
 
@@ -216,6 +228,7 @@ static v8::Handle<v8::Value> outerTextAttrGetter(v8::Local<v8::String> name, con
 {
     INC_STATS("DOM.HTMLElement.outerText._get");
     HTMLElement* imp = V8HTMLElement::toNative(info.Holder());
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());
     return v8String(imp->outerText());
 }
 
@@ -236,6 +249,7 @@ static v8::Handle<v8::Value> childrenAttrGetter(v8::Local<v8::String> name, cons
 {
     INC_STATS("DOM.HTMLElement.children._get");
     HTMLElement* imp = V8HTMLElement::toNative(info.Holder());
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());
     return toV8(imp->children());
 }
 
@@ -243,6 +257,7 @@ static v8::Handle<v8::Value> contentEditableAttrGetter(v8::Local<v8::String> nam
 {
     INC_STATS("DOM.HTMLElement.contentEditable._get");
     HTMLElement* imp = V8HTMLElement::toNative(info.Holder());
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());
     return v8String(imp->contentEditable());
 }
 
@@ -250,6 +265,7 @@ static void contentEditableAttrSetter(v8::Local<v8::String> name, v8::Local<v8::
 {
     INC_STATS("DOM.HTMLElement.contentEditable._set");
     HTMLElement* imp = V8HTMLElement::toNative(info.Holder());
+	if (!RO_check(imp)) return;
     V8Parameter<WithNullCheck> v = value;
     imp->setContentEditable(v);
     return;
@@ -259,6 +275,7 @@ static v8::Handle<v8::Value> isContentEditableAttrGetter(v8::Local<v8::String> n
 {
     INC_STATS("DOM.HTMLElement.isContentEditable._get");
     HTMLElement* imp = V8HTMLElement::toNative(info.Holder());
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());
     return v8Boolean(imp->isContentEditable());
 }
 
@@ -420,6 +437,7 @@ v8::Handle<v8::Object> V8HTMLElement::wrap(HTMLElement* impl, bool forceNewObjec
     // Enter the node's context and create the wrapper in that context.
     if (!context.IsEmpty())
         context->Enter();
+
     wrapper = V8DOMWrapper::instantiateV8Object(proxy, &info, impl);
     // Exit the node's context if it was entered.
     if (!context.IsEmpty())

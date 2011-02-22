@@ -50,6 +50,7 @@ static v8::Handle<v8::Value> nodeNameAttrGetter(v8::Local<v8::String> name, cons
 {
     INC_STATS("DOM.Node.nodeName._get");
     Node* imp = V8Node::toNative(info.Holder());
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());		//virtual function, hard to mediate, have to mediate here.
     return v8StringOrNull(imp->nodeName());
 }
 
@@ -57,6 +58,7 @@ static v8::Handle<v8::Value> nodeValueAttrGetter(v8::Local<v8::String> name, con
 {
     INC_STATS("DOM.Node.nodeValue._get");
     Node* imp = V8Node::toNative(info.Holder());
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());
     return v8StringOrNull(imp->nodeValue());
 }
 
@@ -65,6 +67,13 @@ static void nodeValueAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value>
     INC_STATS("DOM.Node.nodeValue._set");
     Node* imp = V8Node::toNative(info.Holder());
 	if (!RO_check(imp)) return;
+	if (imp->nodeType() == 3)	//3 is textnode
+	{
+		if (imp->parent())
+		{
+			if (!RO_check(imp->parent())) return;
+		}
+	}
     V8Parameter<WithNullCheck> v = value;
     ExceptionCode ec = 0;
     imp->setNodeValue(v, ec);
@@ -77,6 +86,7 @@ static v8::Handle<v8::Value> nodeTypeAttrGetter(v8::Local<v8::String> name, cons
 {
     INC_STATS("DOM.Node.nodeType._get");
     Node* imp = V8Node::toNative(info.Holder());
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());
     return v8::Integer::New(imp->nodeType());
 }
 
@@ -84,6 +94,7 @@ static v8::Handle<v8::Value> parentNodeAttrGetter(v8::Local<v8::String> name, co
 {
     INC_STATS("DOM.Node.parentNode._get");
     Node* imp = V8Node::toNative(info.Holder());
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());
     return toV8(imp->parentNode());
 }
 
@@ -91,6 +102,7 @@ static v8::Handle<v8::Value> childNodesAttrGetter(v8::Local<v8::String> name, co
 {
     INC_STATS("DOM.Node.childNodes._get");
     Node* imp = V8Node::toNative(info.Holder());
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());
     return toV8(imp->childNodes());
 }
 
@@ -98,6 +110,7 @@ static v8::Handle<v8::Value> firstChildAttrGetter(v8::Local<v8::String> name, co
 {
     INC_STATS("DOM.Node.firstChild._get");
     Node* imp = V8Node::toNative(info.Holder());
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());
     return toV8(imp->firstChild());
 }
 
@@ -105,6 +118,7 @@ static v8::Handle<v8::Value> lastChildAttrGetter(v8::Local<v8::String> name, con
 {
     INC_STATS("DOM.Node.lastChild._get");
     Node* imp = V8Node::toNative(info.Holder());
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());
     return toV8(imp->lastChild());
 }
 
@@ -112,6 +126,7 @@ static v8::Handle<v8::Value> previousSiblingAttrGetter(v8::Local<v8::String> nam
 {
     INC_STATS("DOM.Node.previousSibling._get");
     Node* imp = V8Node::toNative(info.Holder());
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());
     return toV8(imp->previousSibling());
 }
 
@@ -119,6 +134,7 @@ static v8::Handle<v8::Value> nextSiblingAttrGetter(v8::Local<v8::String> name, c
 {
     INC_STATS("DOM.Node.nextSibling._get");
     Node* imp = V8Node::toNative(info.Holder());
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());
     return toV8(imp->nextSibling());
 }
 
@@ -128,6 +144,7 @@ static v8::Handle<v8::Value> attributesAttrGetter(v8::Local<v8::String> name, co
 	//zyc: no reason to give attributes to readonly nodes.
     Node* imp = V8Node::toNative(info.Holder());
 	if (!RO_check(imp)) return v8::Undefined();
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());
     return toV8(imp->attributes());
 }
 
@@ -135,6 +152,7 @@ static v8::Handle<v8::Value> ownerDocumentAttrGetter(v8::Local<v8::String> name,
 {
     INC_STATS("DOM.Node.ownerDocument._get");
     Node* imp = V8Node::toNative(info.Holder());
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());
     return toV8(imp->ownerDocument());
 }
 
@@ -142,6 +160,7 @@ static v8::Handle<v8::Value> namespaceURIAttrGetter(v8::Local<v8::String> name, 
 {
     INC_STATS("DOM.Node.namespaceURI._get");
     Node* imp = V8Node::toNative(info.Holder());
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());
     return v8StringOrNull(imp->namespaceURI());
 }
 
@@ -149,6 +168,7 @@ static v8::Handle<v8::Value> prefixAttrGetter(v8::Local<v8::String> name, const 
 {
     INC_STATS("DOM.Node.prefix._get");
     Node* imp = V8Node::toNative(info.Holder());
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());
     return v8StringOrNull(imp->prefix());
 }
 
@@ -169,6 +189,7 @@ static v8::Handle<v8::Value> localNameAttrGetter(v8::Local<v8::String> name, con
 {
     INC_STATS("DOM.Node.localName._get");
     Node* imp = V8Node::toNative(info.Holder());
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());
     return v8StringOrNull(imp->localName());
 }
 
@@ -176,6 +197,7 @@ static v8::Handle<v8::Value> baseURIAttrGetter(v8::Local<v8::String> name, const
 {
     INC_STATS("DOM.Node.baseURI._get");
     Node* imp = V8Node::toNative(info.Holder());
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());
     return v8StringOrNull(imp->baseURI());
 }
 
@@ -183,6 +205,7 @@ static v8::Handle<v8::Value> textContentAttrGetter(v8::Local<v8::String> name, c
 {
     INC_STATS("DOM.Node.textContent._get");
     Node* imp = V8Node::toNative(info.Holder());
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());
     return v8StringOrNull(imp->textContent());
 }
 
@@ -203,6 +226,7 @@ static v8::Handle<v8::Value> parentElementAttrGetter(v8::Local<v8::String> name,
 {
     INC_STATS("DOM.Node.parentElement._get");
     Node* imp = V8Node::toNative(info.Holder());
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());
     return toV8(imp->parentElement());
 }
 
@@ -210,6 +234,7 @@ static v8::Handle<v8::Value> hasChildNodesCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Node.hasChildNodes");
     Node* imp = V8Node::toNative(args.Holder());
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());
     return v8Boolean(imp->hasChildNodes());
 }
 
@@ -217,6 +242,7 @@ static v8::Handle<v8::Value> cloneNodeCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Node.cloneNode");
     Node* imp = V8Node::toNative(args.Holder());
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());
     EXCEPTION_BLOCK(bool, deep, args[0]->BooleanValue());
     return toV8(imp->cloneNode(deep));
 }
@@ -225,6 +251,7 @@ static v8::Handle<v8::Value> normalizeCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Node.normalize");
     Node* imp = V8Node::toNative(args.Holder());
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());
     imp->normalize();
     return v8::Handle<v8::Value>();
 }
@@ -233,6 +260,7 @@ static v8::Handle<v8::Value> isSupportedCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Node.isSupported");
     Node* imp = V8Node::toNative(args.Holder());
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, feature, args[0]);
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<WithNullCheck>, version, args[1]);
     return v8Boolean(imp->isSupported(feature, version));
@@ -242,6 +270,7 @@ static v8::Handle<v8::Value> hasAttributesCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Node.hasAttributes");
     Node* imp = V8Node::toNative(args.Holder());
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());
     return v8Boolean(imp->hasAttributes());
 }
 
@@ -249,6 +278,7 @@ static v8::Handle<v8::Value> isSameNodeCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Node.isSameNode");
     Node* imp = V8Node::toNative(args.Holder());
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());
     EXCEPTION_BLOCK(Node*, other, V8Node::HasInstance(args[0]) ? V8Node::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0);
     return v8Boolean(imp->isSameNode(other));
 }
@@ -257,6 +287,7 @@ static v8::Handle<v8::Value> isEqualNodeCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Node.isEqualNode");
     Node* imp = V8Node::toNative(args.Holder());
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());
     EXCEPTION_BLOCK(Node*, other, V8Node::HasInstance(args[0]) ? V8Node::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0);
     return v8Boolean(imp->isEqualNode(other));
 }
@@ -265,6 +296,7 @@ static v8::Handle<v8::Value> lookupPrefixCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Node.lookupPrefix");
     Node* imp = V8Node::toNative(args.Holder());
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<WithNullCheck>, namespaceURI, args[0]);
     return v8StringOrNull(imp->lookupPrefix(namespaceURI));
 }
@@ -273,6 +305,7 @@ static v8::Handle<v8::Value> isDefaultNamespaceCallback(const v8::Arguments& arg
 {
     INC_STATS("DOM.Node.isDefaultNamespace");
     Node* imp = V8Node::toNative(args.Holder());
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<WithNullCheck>, namespaceURI, args[0]);
     return v8Boolean(imp->isDefaultNamespace(namespaceURI));
 }
@@ -281,6 +314,7 @@ static v8::Handle<v8::Value> lookupNamespaceURICallback(const v8::Arguments& arg
 {
     INC_STATS("DOM.Node.lookupNamespaceURI");
     Node* imp = V8Node::toNative(args.Holder());
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<WithNullCheck>, prefix, args[0]);
     return v8StringOrNull(imp->lookupNamespaceURI(prefix));
 }
@@ -289,6 +323,7 @@ static v8::Handle<v8::Value> compareDocumentPositionCallback(const v8::Arguments
 {
     INC_STATS("DOM.Node.compareDocumentPosition");
     Node* imp = V8Node::toNative(args.Holder());
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());
     EXCEPTION_BLOCK(Node*, other, V8Node::HasInstance(args[0]) ? V8Node::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0);
     return v8::Integer::New(imp->compareDocumentPosition(other));
 }
@@ -297,7 +332,12 @@ static v8::Handle<v8::Value> addEventListenerCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Node.addEventListener()");
 	if (!RO_check(V8Node::toNative(args.Holder()))) return v8::Undefined();
+	V8IsolatedContext* isolatedContext = V8IsolatedContext::getEntered();
+	int worldID = 0;
+	if (isolatedContext!=0) worldID = isolatedContext->getWorldID();
     RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(args[1], false, ListenerFindOrCreate);
+	listener->setWorldID(worldID);
+
     if (listener) {
         V8Node::toNative(args.Holder())->addEventListener(v8ValueToAtomicWebCoreString(args[0]), listener, args[2]->BooleanValue());
         createHiddenDependency(args.Holder(), args[1], V8Node::eventListenerCacheIndex);
@@ -321,6 +361,7 @@ static v8::Handle<v8::Value> dispatchEventCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Node.dispatchEvent");
     Node* imp = V8Node::toNative(args.Holder());
+	if (!R_check(imp)) return v8::Handle<v8::Value>(v8::Undefined());
     ExceptionCode ec = 0;
     {
     EXCEPTION_BLOCK(Event*, event, V8Event::HasInstance(args[0]) ? V8Event::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0);
